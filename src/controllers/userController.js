@@ -19,7 +19,12 @@ router.get('/register', function (req, res) {
 
 router.post('/register', async function (req, res) {
     const { username, email, password, repeatPassword } = req.body;
-    await userManager.register({username, email, password, repeatPassword});
+    try {
+        await userManager.register({username, email, password, repeatPassword});
+    } catch (error) {
+        console.log(error.message);
+    }
+
     res.redirect('/users/login');
 });
 

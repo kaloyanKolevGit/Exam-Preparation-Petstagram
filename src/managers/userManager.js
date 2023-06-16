@@ -1,19 +1,15 @@
 const User = require('../models/User')
-const mongoose = require('mongoose');
 
 exports.login = function (username, password) {
 
 }
 
-exports.register = function (userdata) {
-    const user = new User({
-        username: userdata.username,
-        email: userdata.email,
-        password: userdata.password,
-    });
-    user.save()
+exports.register = async (userData) => {
+    if(User.findOne({username: userData.username})) {
+        throw new Error('This username already exists');
+    }
+    User.create(userData);
 }
-
 exports.logout = function (req, res) {
 
 }
