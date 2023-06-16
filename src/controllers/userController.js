@@ -1,11 +1,26 @@
 const router = require('express').Router();
+const userManager = require('../managers/userManager');
+
+
 
 router.get('/login', function (req, res) {
-    res.render('users/login')
+    res.render('users/login');
 });
 
+router.post('/login', async function (req, res) {
+    const { username, password } = req.body;
+    await userManager.login(username, password);
+    res.send('logged in');
+})
+
 router.get('/register', function (req, res) {
-    res.render('users/register')
+    res.render('users/register');
+});
+
+router.post('/register', async function (req, res) {
+    const { username, email, password, repeatPassword } = req.body;
+    await userManager.register({username, email, password, repeatPassword});
+    res.redirect('/users/login');
 });
 
 module.exports = router;
