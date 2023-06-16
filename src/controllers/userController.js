@@ -1,7 +1,6 @@
 const router = require('express').Router();
 const userManager = require('../managers/userManager');
-const jwt = require('../lib/jwt');
-const SECRET = '942f94ed-1430-4487-8dda-9337ea5897c1'
+const {TOKEN_KEY} = require('../config/config')
 
 router.get('/login', function (req, res) {
     res.render('users/login');
@@ -10,14 +9,12 @@ router.get('/login', function (req, res) {
 router.post('/login', async function (req, res) {
     const { username, password } = req.body;
 
-    try {
-      const token = await userManager.login(username, password);
-    } catch (error) {
-        console.log(error.message);
-    }
+    let token;
 
-    res.cookie('token', token);
+    token = await userManager.login(username, password);
 
+
+    res.cookie(TOKEN_KEY, token);
     res.redirect('/');
 })
 
@@ -27,14 +24,15 @@ router.get('/register', function (req, res) {
 
 router.post('/register', async function (req, res) {
     const { username, email, password, repeatPassword } = req.body;
-    
-    try {
-        await userManager.register({username, email, password, repeatPassword});
-    } catch (error) {
-        console.log('fuck that');
-    }
+
+    await userManager.register({username, email, password, repeatPassword});
 
     res.redirect('/users/login');
 });
+
+router.get('/logout', async function (req, res) {
+    res.clearCookie('token')
+    res.redirect('/');
+})
 
 module.exports = router;
