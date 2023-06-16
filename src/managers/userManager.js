@@ -27,11 +27,9 @@ exports.login = async function (username, password) {
 }
 
 exports.register = async (userData) => {
-    if(await User.findOne({username: userData.username})) {
+    const user = await User.findOne({username: userData.username}) 
+       if(user) {
         throw new Error('This username already exists');
     }
-    User.create(userData);
-}
-exports.logout = function (req, res) {
-
+    return User.create(userData);
 }

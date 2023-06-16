@@ -1,3 +1,4 @@
+const {getErrorMessage} = require('../utils/errorHelpers')
 exports.errorHandler = (err, req, res) => {
-    res.redirect('/404')
+    res.render('404', {error: getErrorMessage()});
 }

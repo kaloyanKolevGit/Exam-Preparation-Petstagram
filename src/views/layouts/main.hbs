@@ -12,13 +12,13 @@
 
 <body>
     <!--Error Container-->
-
-    <!-- <div>
+    {{#if error}}
+    <div>
         <div class="errorContainer">
-            <p>Error</p>
+            <p>{{error}}</p>
         </div>
-    </div> -->
-
+    </div> 
+    {{/if}}
     <!-- Starts Header Section with Navigation Bar -->
     <header>
         <nav class="navbar">
@@ -42,19 +42,7 @@
                                 <i>Catalog</i>
                             </a>
                         </li>
-                        <!--For Guest User-->
-                        <li class="nav-item">
-                            <!-- Link to Login Page -->
-                            <a href="/users/login">
-                                <i>Login</i>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <!-- Link to Register Page -->
-                            <a href="/users/register">
-                                <i>Register</i>
-                            </a>
-                        </li>
+
                         <!--For login users-->
                         {{#if isAuthenticated}}
                         <li class="nav-item">
@@ -74,6 +62,21 @@
                             <!-- Link to Logout Page -->
                             <a href="/users/logout">
                                 <i>Logout</i>
+                            </a>
+                        </li>
+                        
+                        {{else}}
+                        <!--For Guest User-->
+                        <li class="nav-item">
+                            <!-- Link to Login Page -->
+                            <a href="/users/login">
+                                <i>Login</i>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <!-- Link to Register Page -->
+                            <a href="/users/register">
+                                <i>Register</i>
                             </a>
                         </li>
                         {{/if}}
