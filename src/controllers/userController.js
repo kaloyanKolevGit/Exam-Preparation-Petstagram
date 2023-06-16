@@ -22,7 +22,7 @@ router.post('/register', async function (req, res) {
     try {
         await userManager.register({username, email, password, repeatPassword});
     } catch (error) {
-        console.log(error.message);
+        console.log('fuck that');
     }
 
     res.redirect('/users/login');

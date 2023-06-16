@@ -5,7 +5,7 @@ exports.login = function (username, password) {
 }
 
 exports.register = async (userData) => {
-    if(User.findOne({username: userData.username})) {
+    if(await User.findOne({username: userData.username})) {
         throw new Error('This username already exists');
     }
     User.create(userData);
