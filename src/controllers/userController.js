@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const userManager = require('../managers/userManager');
-
-
+const jwt = require('../lib/jwt');
+const SECRET = '942f94ed-1430-4487-8dda-9337ea5897c1'
 
 router.get('/login', function (req, res) {
     res.render('users/login');
@@ -10,7 +10,7 @@ router.get('/login', function (req, res) {
 router.post('/login', async function (req, res) {
     const { username, password } = req.body;
     try {
-        await userManager.login(username, password);
+      const token = await userManager.login(username, password);
     } catch (error) {
         console.log(error.message);
     }
