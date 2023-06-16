@@ -9,8 +9,12 @@ router.get('/login', function (req, res) {
 
 router.post('/login', async function (req, res) {
     const { username, password } = req.body;
-    await userManager.login(username, password);
-    res.send('logged in');
+    try {
+        await userManager.login(username, password);
+    } catch (error) {
+        console.log(error.message);
+    }
+    res.redirect('/');
 })
 
 router.get('/register', function (req, res) {
