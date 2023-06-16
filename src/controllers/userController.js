@@ -25,12 +25,12 @@ router.get('/register', function (req, res) {
     res.render('users/register');
 });
 
-router.post('/register', async function (req, res) {
+router.post('/register', async function (req, res, next) {
     const { username, email, password, repeatPassword } = req.body;
     try {
-        await userManager.register({ username, email, password, repeatPassword });
-
-        res.redirect('/users/login');
+        const token = await userManager.register({ username, email, password, repeatPassword });
+        res.cookie(TOKEN_KEY, token);
+        res.redirect('/');
     } catch (error) {
         res.render('users/register', {error: getErrorMessage(error)});
     }
