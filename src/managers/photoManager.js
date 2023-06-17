@@ -1,5 +1,16 @@
-const Photo = require('../models/Photo')
+const Photo = require('../models/Photo');
+const User = require('../models/User');
 
 exports.addPhoto = async (photoData) => {
     const newPhoto = await Photo.create(photoData)
+}
+
+exports.getAllPhotos = async () => {
+    const photos = await Photo.find().lean()
+    photos.forEach(async (photo) => {
+        const user = await User.findById(photo.owner)
+        photo['ownerName'] = user.username
+        console.log(user);
+    })
+    return photos
 }
