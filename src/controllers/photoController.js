@@ -43,4 +43,13 @@ router.get('/:photoId/details', async function (req, res) {
     }
 });
 
+router.get('/:photoId/delete', async (req, res) => {
+    try {
+        await photoManager.deletePhoto(req.params.photoId)
+        res.redirect('/photos/catalog')
+    } catch (error) {
+        res.render(`photos/${req.params.photoId}/details`, { error: "Unsuccessful deletion" });
+    }
+});
+
 module.exports = router;
