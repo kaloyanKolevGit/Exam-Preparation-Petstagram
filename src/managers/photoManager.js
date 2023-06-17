@@ -6,17 +6,11 @@ exports.addPhoto = async (photoData) => {
 }
 
 exports.getAllPhotos = async () => {
-    const photos = await Photo.find().lean()
-    photos.forEach(async (photo) => {
-        const user = await User.findById(photo.owner)
-        photo['ownerName'] = user.username
-    })
+    const photos = await Photo.find().populate('owner').lean()
     return photos
 }
 
 exports.getOnePhoto = async (photoId) => {
-    const photo = await Photo.findById(photoId).lean()
-    const user = await User.findById(photo.owner)
-        photo['ownerName'] = user.username
+    const photo = await Photo.findById(photoId).populate('owner').lean()
     return photo;
 }

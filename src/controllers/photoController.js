@@ -33,8 +33,10 @@ router.get('/catalog', async function (req, res) {
 router.get('/:photoId/details', async function (req, res) {
     try {
         const photo = await photoManager.getOnePhoto(req.params.photoId)
-        const isAuth = res.locals.user?._id == photo.owner
-        res.render('photos/details', { photo, isAuth })
+        const isAuth = res.locals.user?._id == photo.owner._id
+        const loggedIn = res.locals.user?._id
+        const allowComments = isAuth == false && loggedIn
+        res.render('photos/details', { photo, isAuth, allowComments })
 
     } catch (error) {
         res.render('photos/details', { error: getErrorMessage(error) });
