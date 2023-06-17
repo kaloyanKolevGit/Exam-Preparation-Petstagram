@@ -52,4 +52,23 @@ router.get('/:photoId/delete', async (req, res) => {
     }
 });
 
+router.get('/:photoId/edit', async (req, res) => {
+    try {
+        const photoData = await photoManager.getOnePhoto(req.params.photoId)
+        res.render('photos/edit', {photoData})
+    } catch (error) {
+        res.render(`photos/${req.params.photoId}/edit`, { error: getErrorMessage(error) });
+    }
+});
+
+router.post('/:photoId/edit', async (req, res) => {
+    const newData = req.body
+    try {
+        await photoManager.updateOnePhoto(req.params.photoId, newData)
+        res.redirect(`/photos/${req.params.photoId}/details`)
+    } catch (error) {
+        res.render(`photos/${req.params.photoId}/edit`, { error: getErrorMessage(error) });
+    }
+});
+
 module.exports = router;

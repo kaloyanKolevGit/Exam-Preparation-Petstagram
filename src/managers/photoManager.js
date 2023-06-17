@@ -7,3 +7,5 @@ exports.getAllPhotos = () => Photo.find().populate('owner').lean()
 exports.getOnePhoto = (photoId) => Photo.findById(photoId).populate('owner').lean()
 
 exports.deletePhoto = (photoId) => Photo.findByIdAndDelete(photoId)
+
+exports.updateOnePhoto = (photoId, photoData) => Photo.findByIdAndUpdate(photoId, photoData)
