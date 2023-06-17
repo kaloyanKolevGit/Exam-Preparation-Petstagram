@@ -4,7 +4,7 @@ const userController = require('./controllers/userController')
 const photoController = require('./controllers/photoController')
 
 router.use(homeController)
-router.use(photoController)
+router.use('/photos', photoController)
 router.use('/users', userController)
 router.get('*', (req, res) => {
   res.redirect('/404')

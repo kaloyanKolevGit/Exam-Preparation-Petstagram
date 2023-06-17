@@ -10,7 +10,13 @@ exports.getAllPhotos = async () => {
     photos.forEach(async (photo) => {
         const user = await User.findById(photo.owner)
         photo['ownerName'] = user.username
-        console.log(user);
     })
     return photos
+}
+
+exports.getOnePhoto = async (photoId) => {
+    const photo = await Photo.findById(photoId).lean()
+    const user = await User.findById(photo.owner)
+        photo['ownerName'] = user.username
+    return photo;
 }

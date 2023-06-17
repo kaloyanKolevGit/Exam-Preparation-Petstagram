@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const { getErrorMessage } = require('../utils/errorHelpers');
 const photoManager = require('../managers/photoManager')
 
 router.get('/create', function (req, res) {
@@ -6,23 +7,38 @@ router.get('/create', function (req, res) {
 });
 
 router.post('/create', async function (req, res) {
-    const { name, age, description, location, image } = req.body
     photoData = {
-        name,
-        age,
-        description,
-        location,
-        image,
+        ...req.body,
         owner: req.user._id
     }
-    await photoManager.addPhoto(photoData)
-    res.redirect('/catalog')
+    try {
+        await photoManager.addPhoto(photoData)
+        res.redirect('/photos/catalog')
+    } catch (error) {
+        res.render('photos/create', { error: getErrorMessage(error) });
+    }
+
 })
 
 router.get('/catalog', async function (req, res) {
-    const photos = await photoManager.getAllPhotos()
+    try {
+        const photos = await photoManager.getAllPhotos()
+        res.render('photos/catalog', { photos })
+    } catch (error) {
+        res.render('photos/catalog', { error: getErrorMessage(error) });
+    }
 
-    res.render('./photos/catalog', { photos })
 })
+
+router.get('/:photoId/details', async function (req, res) {
+    try {
+        const photo = await photoManager.getOnePhoto(req.params.photoId)
+        const isAuth = res.locals.user?._id == photo.owner
+        res.render('photos/details', { photo, isAuth })
+
+    } catch (error) {
+        res.render('photos/details', { error: getErrorMessage(error) });
+    }
+});
 
 module.exports = router;
