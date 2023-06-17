@@ -1,12 +1,13 @@
 const router = require('express').Router();
 const { getErrorMessage } = require('../utils/errorHelpers');
 const photoManager = require('../managers/photoManager')
+const { isAuth } = require('../middlewares/authMiddleware')
 
-router.get('/create', function (req, res) {
+router.get('/create', isAuth, function (req, res) {
     res.render('./photos/create')
 });
 
-router.post('/create', async function (req, res) {
+router.post('/create', isAuth, async function (req, res) {
     photoData = {
         ...req.body,
         owner: req.user._id
@@ -36,39 +37,55 @@ router.get('/:photoId/details', async function (req, res) {
         const isAuth = res.locals.user?._id == photo.owner._id
         const loggedIn = res.locals.user?._id
         const allowComments = isAuth == false && loggedIn
-        res.render('photos/details', { photo, isAuth, allowComments })
+        const comments = await photoManager.getAllComments(req.params.photoId)
+        res.render('photos/details', { photo, isAuth, allowComments, comments })
 
     } catch (error) {
-        res.render('photos/details', { error: getErrorMessage(error) });
+        res.render('photos/catalog', { error: getErrorMessage(error) });;
     }
 });
 
-router.get('/:photoId/delete', async (req, res) => {
+router.get('/:photoId/delete', isAuth, async (req, res) => {
     try {
         await photoManager.deletePhoto(req.params.photoId)
         res.redirect('/photos/catalog')
     } catch (error) {
-        res.render(`photos/${req.params.photoId}/details`, { error: "Unsuccessful deletion" });
+        const photo = photoManager.getOnePhoto(req.params.photoId)
+        res.render(`photos/details`, { photo , error: "Unsuccessful deletion" });
     }
 });
 
-router.get('/:photoId/edit', async (req, res) => {
+router.get('/:photoId/edit', isAuth, async (req, res) => {
     try {
         const photoData = await photoManager.getOnePhoto(req.params.photoId)
         res.render('photos/edit', {photoData})
     } catch (error) {
-        res.render(`photos/${req.params.photoId}/edit`, { error: getErrorMessage(error) });
+        const photo = photoManager.getOnePhoto(req.params.photoId)
+        res.render(`photos/details`, { photo , error: "Error opening editor"});
     }
 });
 
-router.post('/:photoId/edit', async (req, res) => {
+router.post('/:photoId/edit', isAuth, async (req, res) => {
     const newData = req.body
     try {
         await photoManager.updateOnePhoto(req.params.photoId, newData)
         res.redirect(`/photos/${req.params.photoId}/details`)
     } catch (error) {
-        res.render(`photos/${req.params.photoId}/edit`, { error: getErrorMessage(error) });
+        const photo = photoManager.getOnePhoto(req.params.photoId)
+        res.render(`photos/details`, { photo , error: "Unsuccessful edit"});
     }
 });
+
+router.post('/:photoId/comments', async (req, res) => {
+    const photo = photoManager.getOnePhoto(req.params.photoId)
+    try {
+        const { message } = req.body
+        const user = req.user._id;
+        await photoManager.addComment(req.params.photoId, { user, message })
+        res.redirect(`/photos/${req.params.photoId}/details`)
+    } catch (error) {
+        res.render(`photos/details`, { photo , error: "There was an error posting your comment"});
+    }
+})
 
 module.exports = router;

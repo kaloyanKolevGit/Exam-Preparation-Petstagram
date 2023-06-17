@@ -2,6 +2,7 @@ const router = require('express').Router();
 const userManager = require('../managers/userManager');
 const { TOKEN_KEY } = require('../config/config')
 const {getErrorMessage} = require('../utils/errorHelpers');
+const { isAuth } = require('../middlewares/authMiddleware')
 
 router.get('/login', function (req, res) {
     res.render('users/login');
@@ -37,9 +38,10 @@ router.post('/register', async function (req, res, next) {
 
 });
 
-router.get('/logout', async function (req, res) {
+router.get('/logout', isAuth, async function (req, res) {
     res.clearCookie('token')
     res.redirect('/');
 })
+
 
 module.exports = router;

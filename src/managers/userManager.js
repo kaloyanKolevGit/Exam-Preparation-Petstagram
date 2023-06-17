@@ -2,6 +2,8 @@ const User = require('../models/User')
 const bcrypt = require('bcrypt');
 const jwt = require('../lib/jwt');
 const {SECRET} = require('../config/config')
+const Photo = require('../models/Photo');
+const Mongoose = require('mongoose').Mongoose;
 
 exports.login = async function (username, password) {
     const user = await User.findOne({username})  
@@ -29,6 +31,11 @@ exports.register = async (userData) => {
 
     const token = await generateToken(createdUser)
     return token;
+}
+
+exports.getUserPhotos = async (userId) => {
+    const id = Mongoose.Types.ObjectId(userId)
+    Photo.find({owner: id})
 }
 
 async function generateToken(user) {
